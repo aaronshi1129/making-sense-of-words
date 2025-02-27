@@ -85,7 +85,9 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 90vw;
+            max-width: 1200px;
+            width: 95%;
+            margin: 2rem auto;
         }
 
         h1 {
@@ -119,9 +121,9 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
             gap: 15px;
-            width: min(90vw, 500px);
+            width: 100%;
             margin-bottom: 2rem;
         }
 
@@ -129,13 +131,16 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
-            padding: 1rem;
+            padding: 1.2rem 0.8rem;
             text-align: center;
             cursor: pointer;
             user-select: none;
             transition: all 0.3s ease;
             font-size: 1.1em;
             color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .word-card:hover {
@@ -190,14 +195,34 @@
             line-height: 1.5;
         }
 
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8em;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+
         @keyframes pulse {
             0% { opacity: 0.6; }
             50% { opacity: 1; }
             100% { opacity: 0.6; }
         }
 
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(4, minmax(150px, 1fr));
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 600px) {
             .grid-container {
+                grid-template-columns: repeat(2, minmax(140px, 1fr));
                 gap: 10px;
             }
 
@@ -206,8 +231,18 @@
                 font-size: 0.9em;
             }
 
+            .game-container {
+                width: 98%;
+                padding: 1rem;
+            }
+
             h1 {
                 font-size: 2em;
+            }
+
+            .footer {
+                font-size: 0.7em;
+                padding: 5px;
             }
         }
     </style>
@@ -242,22 +277,26 @@
         </div>
     </div>
 
+    <div class="footer">
+        Author: Aaron Shi. Released in March 2025.
+    </div>
+
     <script>
-const wordBank = [
-    { category: "Types of Drinks", words: ["Whiskey", "Espresso", "Mojito", "Smoothie", "Beer", "Wine", "Martini", "Cappuccino", "Lemonade", "Cola", "Vodka", "Tequila", "Champagne", "Cider", "Rum", "Gin", "Milkshake", "Iced Tea", "Hot Chocolate", "Soda", "Water", "Apple Juice", "Milk", "Orange Juice"] },
-    { category: "Musical Instruments", words: ["Violin", "Piano", "Saxophone", "Drums", "Guitar", "Trumpet", "Flute", "Clarinet", "Trombone", "Harp", "Bass", "Oboe", "Ukulele", "Cello", "Banjo", "Mandolin", "Synthesizer", "Accordion", "Xylophone", "Tambourine", "Tuba", "Piccolo", "Marimba", "Conga"] },
-    { category: "Luxury Brands", words: ["Gucci", "Rolex", "Tesla", "Chanel", "Prada", "Versace", "Hermes", "Louis Vuitton", "Cartier", "Burberry", "Armani", "Dior", "Fendi", "Givenchy", "Valentino", "Yves Saint Laurent", "Balenciaga", "Omega", "Ferrari", "Maserati", "Jaguar", "Montblanc", "Bvlgari", "Patek Philippe"] },
-    { category: "Types of Dance", words: ["Ballet", "Tango", "Salsa", "Flamenco", "Hip Hop", "Waltz", "Foxtrot", "Cha Cha", "Swing", "Breakdance", "Jive", "Polka", "Tap Dance", "Bhangra", "Contemporary", "Jazz", "Krumping", "Merengue", "Zumba", "Paso Doble", "Quickstep", "Rumba", "Square Dance", "Bolero"] },
-    { category: "Mythological Creatures", words: ["Phoenix", "Mermaid", "Unicorn", "Dragon", "Griffin", "Chimera", "Minotaur", "Kraken", "Pegasus", "Basilisk", "Werewolf", "Vampire", "Yeti", "Sphinx", "Gorgon", "Centaur", "Hydra", "Cyclops", "Kelpie", "Nymph", "Djinn", "Leprechaun", "Banshee", "Chupacabra"] },
-    { category: "Sports Equipment", words: ["Helmet", "Racket", "Goggles", "Bat", "Gloves", "Ball", "Net", "Pads", "Skates", "Stick", "Dumbbell", "Barbell", "Hurdles", "Mat", "Knee Pads", "Javelin", "Puck", "Hoop", "Whistle", "Bow", "Arrow", "Treadmill", "Speed Rope", "Foam Roller"] },
-    { category: "Technology Companies", words: ["Apple", "Samsung", "Sony", "Microsoft", "Google", "Amazon", "Intel", "IBM", "Huawei", "Nvidia", "Dell", "HP", "Cisco", "Oracle", "Facebook", "TikTok", "Snapchat", "Spotify", "Adobe", "Netflix", "Zoom", "Twitter", "Tesla", "Xiaomi"] },
-    { category: "Types of Cheese", words: ["Cheddar", "Brie", "Gouda", "Feta", "Camembert", "Mozzarella", "Parmesan", "Blue Cheese", "Ricotta", "Swiss", "Provolone", "Havarti", "Pepper Jack", "Roquefort", "Colby", "Paneer", "Manchego", "Edam", "Gruyere", "Goat Cheese", "Emmental", "Queso Fresco", "Cotija", "Halloumi"] },
-    { category: "Types of Pasta", words: ["Spaghetti", "Fusilli", "Penne", "Ravioli", "Linguine", "Farfalle", "Macaroni", "Tagliatelle", "Orzo", "Lasagna", "Gnocchi", "Tortellini", "Ziti", "Cavatappi", "Fettuccine", "Rotini", "Rigatoni", "Conchiglie", "Bucatini", "Pappardelle", "Vermicelli", "Capellini", "Anellini", "Cannelloni"] },
-    { category: "Board Games", words: ["Chess", "Monopoly", "Scrabble", "Risk", "Clue", "Uno", "Catan", "Twister", "Yahtzee", "Pictionary", "Boggle", "Jenga", "Dominoes", "Checkers", "Battleship", "Ticket to Ride", "Cranium", "Candy Land", "Operation", "Pandemic", "Guess Who", "Sorry!", "Connect Four", "Backgammon"] },
-    { category: "Planets", words: ["Mercury", "Venus", "Mars", "Neptune", "Earth", "Jupiter", "Saturn", "Uranus", "Pluto", "Ceres", "Eris", "Haumea", "Makemake", "Io", "Europa", "Titan", "Ganymede", "Callisto", "Phobos", "Deimos", "Triton", "Charon", "Enceladus", "Oberon"] },
-    { category: "Capital Cities", words: ["Paris", "Tokyo", "Ottawa", "Rome", "London", "Berlin", "Madrid", "Moscow", "Beijing", "Canberra", "Washington D.C.", "Brasilia", "Cairo", "Hanoi", "New Delhi", "Seoul", "Bangkok", "Jakarta", "Lisbon", "Athens", "Vienna", "Warsaw", "Stockholm", "Helsinki"] },
-    { category: "Programming Languages", words: ["Python", "Java", "Ruby", "Swift", "JavaScript", "C++", "C#", "PHP", "Go", "Kotlin", "Perl", "R", "Scala", "Haskell", "Objective-C", "Visual Basic", "Dart", "Groovy", "Elixir", "Lua", "TypeScript", "Matlab", "Rust", "F#"] },
-    { category: "Sea Creatures", words: ["Octopus", "Seahorse", "Jellyfish", "Lobster", "Shrimp", "Crab", "Whale", "Dolphin", "Clownfish", "Swordfish", "Starfish", "Sea Turtle", "Manatee", "Manta Ray", "Squid", "Seal", "Penguin", "Eel", "Narwhal", "Walrus", "Angelfish", "Barracuda", "Pufferfish", "Seadragon"] }
+        const wordBank = [
+            { category: "Types of Drinks", words: ["Whiskey", "Espresso", "Mojito", "Smoothie", "Beer", "Wine", "Martini", "Cappuccino", "Lemonade", "Cola", "Vodka", "Tequila", "Champagne", "Cider", "Rum", "Gin", "Milkshake", "Iced Tea", "Hot Chocolate", "Soda", "Water", "Apple Juice", "Milk", "Orange Juice"] },
+            { category: "Musical Instruments", words: ["Violin", "Piano", "Saxophone", "Drums", "Guitar", "Trumpet", "Flute", "Clarinet", "Trombone", "Harp", "Bass", "Oboe", "Ukulele", "Cello", "Banjo", "Mandolin", "Synthesizer", "Accordion", "Xylophone", "Tambourine", "Tuba", "Piccolo", "Marimba", "Conga"] },
+            { category: "Luxury Brands", words: ["Gucci", "Rolex", "Tesla", "Chanel", "Prada", "Versace", "Hermes", "Louis Vuitton", "Cartier", "Burberry", "Armani", "Dior", "Fendi", "Givenchy", "Valentino", "Yves Saint Laurent", "Balenciaga", "Omega", "Ferrari", "Maserati", "Jaguar", "Montblanc", "Bvlgari", "Patek Philippe"] },
+            { category: "Types of Dance", words: ["Ballet", "Tango", "Salsa", "Flamenco", "Hip Hop", "Waltz", "Foxtrot", "Cha Cha", "Swing", "Breakdance", "Jive", "Polka", "Tap Dance", "Bhangra", "Contemporary", "Jazz", "Krumping", "Merengue", "Zumba", "Paso Doble", "Quickstep", "Rumba", "Square Dance", "Bolero"] },
+            { category: "Mythological Creatures", words: ["Phoenix", "Mermaid", "Unicorn", "Dragon", "Griffin", "Chimera", "Minotaur", "Kraken", "Pegasus", "Basilisk", "Werewolf", "Vampire", "Yeti", "Sphinx", "Gorgon", "Centaur", "Hydra", "Cyclops", "Kelpie", "Nymph", "Djinn", "Leprechaun", "Banshee", "Chupacabra"] },
+            { category: "Sports Equipment", words: ["Helmet", "Racket", "Goggles", "Bat", "Gloves", "Ball", "Net", "Pads", "Skates", "Stick", "Dumbbell", "Barbell", "Hurdles", "Mat", "Knee Pads", "Javelin", "Puck", "Hoop", "Whistle", "Bow", "Arrow", "Treadmill", "Speed Rope", "Foam Roller"] },
+            { category: "Technology Companies", words: ["Apple", "Samsung", "Sony", "Microsoft", "Google", "Amazon", "Intel", "IBM", "Huawei", "Nvidia", "Dell", "HP", "Cisco", "Oracle", "Facebook", "TikTok", "Snapchat", "Spotify", "Adobe", "Netflix", "Zoom", "Twitter", "Tesla", "Xiaomi"] },
+            { category: "Types of Cheese", words: ["Cheddar", "Brie", "Gouda", "Feta", "Camembert", "Mozzarella", "Parmesan", "Blue Cheese", "Ricotta", "Swiss", "Provolone", "Havarti", "Pepper Jack", "Roquefort", "Colby", "Paneer", "Manchego", "Edam", "Gruyere", "Goat Cheese", "Emmental", "Queso Fresco", "Cotija", "Halloumi"] },
+            { category: "Types of Pasta", words: ["Spaghetti", "Fusilli", "Penne", "Ravioli", "Linguine", "Farfalle", "Macaroni", "Tagliatelle", "Orzo", "Lasagna", "Gnocchi", "Tortellini", "Ziti", "Cavatappi", "Fettuccine", "Rotini", "Rigatoni", "Conchiglie", "Bucatini", "Pappardelle", "Vermicelli", "Capellini", "Anellini", "Cannelloni"] },
+            { category: "Board Games", words: ["Chess", "Monopoly", "Scrabble", "Risk", "Clue", "Uno", "Catan", "Twister", "Yahtzee", "Pictionary", "Boggle", "Jenga", "Dominoes", "Checkers", "Battleship", "Ticket to Ride", "Cranium", "Candy Land", "Operation", "Pandemic", "Guess Who", "Sorry!", "Connect Four", "Backgammon"] },
+            { category: "Planets", words: ["Mercury", "Venus", "Mars", "Neptune", "Earth", "Jupiter", "Saturn", "Uranus", "Pluto", "Ceres", "Eris", "Haumea", "Makemake", "Io", "Europa", "Titan", "Ganymede", "Callisto", "Phobos", "Deimos", "Triton", "Charon", "Enceladus", "Oberon"] },
+            { category: "Capital Cities", words: ["Paris", "Tokyo", "Ottawa", "Rome", "London", "Berlin", "Madrid", "Moscow", "Beijing", "Canberra", "Washington D.C.", "Brasilia", "Cairo", "Hanoi", "New Delhi", "Seoul", "Bangkok", "Jakarta", "Lisbon", "Athens", "Vienna", "Warsaw", "Stockholm", "Helsinki"] },
+            { category: "Programming Languages", words: ["Python", "Java", "Ruby", "Swift", "JavaScript", "C++", "C#", "PHP", "Go", "Kotlin", "Perl", "R", "Scala", "Haskell", "Objective-C", "Visual Basic", "Dart", "Groovy", "Elixir", "Lua", "TypeScript", "Matlab", "Rust", "F#"] },
+            { category: "Sea Creatures", words: ["Octopus", "Seahorse", "Jellyfish", "Lobster", "Shrimp", "Crab", "Whale", "Dolphin", "Clownfish", "Swordfish", "Starfish", "Sea Turtle", "Manatee", "Manta Ray", "Squid", "Seal", "Penguin", "Eel", "Narwhal", "Walrus", "Angelfish", "Barracuda", "Pufferfish", "Seadragon"] }
         ];
 
         const gridContainer = document.getElementById("grid-container");

@@ -1,0 +1,436 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Making Sense of Words</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background-image: url('https://alittlemoreenglish.weebly.com/uploads/2/6/6/3/26638990/high-tech-vibe-background-image_orig.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .start-content {
+            background: #525269;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .instructions {
+            margin: 2rem 0;
+            line-height: 1.6;
+            font-size: 1.1em;
+            color: #fff;
+            text-align: left;
+        }
+
+        .start-button {
+            padding: 1rem 3rem;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 90vw;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .category-display {
+            font-size: 1.2em;
+            margin-bottom: 1.5rem;
+            padding: 0rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #00f2fe;
+            min-height: 2.5em;
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            width: min(90vw, 500px);
+            margin-bottom: 2rem;
+        }
+
+        .word-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            color: #fff;
+        }
+
+        .word-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .word-card.selected {
+            background: rgba(79, 172, 254, 0.3);
+            border-color: #4facfe;
+        }
+
+        .word-card.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        #new-game-button {
+            padding: 0.8rem 2rem;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #new-game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .game-end-message {
+            display: none;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00f2fe;
+            margin-top: 1.5rem;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        .completion-details {
+            font-size: 0.7em;
+            margin-top: 1rem;
+            color: #fff;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        @media (max-width: 600px) {
+            .grid-container {
+                gap: 10px;
+            }
+
+            .word-card {
+                padding: 0.8rem;
+                font-size: 0.9em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="start-screen">
+        <div class="start-content">
+            <h1>Making Sense of Words</h1>
+            <div class="instructions">
+                <p>Welcome to Making Sense of Words! Here's how to play:</p>
+                <br>
+                <p>1. You'll see 16 words arranged in a 4×4 grid</p>
+                <p>2. These words belong to 4 different categories</p>
+                <p>3. Each category contains 4 related words</p>
+                <p>4. Click on 4 words that you think belong to the same category</p>
+                <p>5. If correct, the words will be removed from the grid</p>
+                <p>6. Find all 4 categories as quickly as you can!</p>
+            </div>
+            <button class="start-button" id="start-button">Start Game</button>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <h1>Making Sense of Words</h1>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div class="category-display"></div>
+        <div class="grid-container" id="grid-container"></div>
+        <button id="new-game-button">New Game</button>
+        <div class="game-end-message" id="game-end-message">
+            🎊 Congratulations! You found all the categories!! 🎉
+            <div class="completion-details" id="completion-details"></div>
+        </div>
+    </div>
+
+    <script>
+const wordBank = [
+    { category: "Types of Drinks", words: ["Whiskey", "Espresso", "Mojito", "Smoothie", "Beer", "Wine", "Martini", "Cappuccino", "Lemonade", "Cola", "Vodka", "Tequila", "Champagne", "Cider", "Rum", "Gin", "Milkshake", "Iced Tea", "Hot Chocolate", "Soda", "Water", "Apple Juice", "Milk", "Orange Juice"] },
+    { category: "Musical Instruments", words: ["Violin", "Piano", "Saxophone", "Drums", "Guitar", "Trumpet", "Flute", "Clarinet", "Trombone", "Harp", "Bass", "Oboe", "Ukulele", "Cello", "Banjo", "Mandolin", "Synthesizer", "Accordion", "Xylophone", "Tambourine", "Tuba", "Piccolo", "Marimba", "Conga"] },
+    { category: "Luxury Brands", words: ["Gucci", "Rolex", "Tesla", "Chanel", "Prada", "Versace", "Hermes", "Louis Vuitton", "Cartier", "Burberry", "Armani", "Dior", "Fendi", "Givenchy", "Valentino", "Yves Saint Laurent", "Balenciaga", "Omega", "Ferrari", "Maserati", "Jaguar", "Montblanc", "Bvlgari", "Patek Philippe"] },
+    { category: "Types of Dance", words: ["Ballet", "Tango", "Salsa", "Flamenco", "Hip Hop", "Waltz", "Foxtrot", "Cha Cha", "Swing", "Breakdance", "Jive", "Polka", "Tap Dance", "Bhangra", "Contemporary", "Jazz", "Krumping", "Merengue", "Zumba", "Paso Doble", "Quickstep", "Rumba", "Square Dance", "Bolero"] },
+    { category: "Mythological Creatures", words: ["Phoenix", "Mermaid", "Unicorn", "Dragon", "Griffin", "Chimera", "Minotaur", "Kraken", "Pegasus", "Basilisk", "Werewolf", "Vampire", "Yeti", "Sphinx", "Gorgon", "Centaur", "Hydra", "Cyclops", "Kelpie", "Nymph", "Djinn", "Leprechaun", "Banshee", "Chupacabra"] },
+    { category: "Sports Equipment", words: ["Helmet", "Racket", "Goggles", "Bat", "Gloves", "Ball", "Net", "Pads", "Skates", "Stick", "Dumbbell", "Barbell", "Hurdles", "Mat", "Knee Pads", "Javelin", "Puck", "Hoop", "Whistle", "Bow", "Arrow", "Treadmill", "Speed Rope", "Foam Roller"] },
+    { category: "Technology Companies", words: ["Apple", "Samsung", "Sony", "Microsoft", "Google", "Amazon", "Intel", "IBM", "Huawei", "Nvidia", "Dell", "HP", "Cisco", "Oracle", "Facebook", "TikTok", "Snapchat", "Spotify", "Adobe", "Netflix", "Zoom", "Twitter", "Tesla", "Xiaomi"] },
+    { category: "Types of Cheese", words: ["Cheddar", "Brie", "Gouda", "Feta", "Camembert", "Mozzarella", "Parmesan", "Blue Cheese", "Ricotta", "Swiss", "Provolone", "Havarti", "Pepper Jack", "Roquefort", "Colby", "Paneer", "Manchego", "Edam", "Gruyere", "Goat Cheese", "Emmental", "Queso Fresco", "Cotija", "Halloumi"] },
+    { category: "Types of Pasta", words: ["Spaghetti", "Fusilli", "Penne", "Ravioli", "Linguine", "Farfalle", "Macaroni", "Tagliatelle", "Orzo", "Lasagna", "Gnocchi", "Tortellini", "Ziti", "Cavatappi", "Fettuccine", "Rotini", "Rigatoni", "Conchiglie", "Bucatini", "Pappardelle", "Vermicelli", "Capellini", "Anellini", "Cannelloni"] },
+    { category: "Board Games", words: ["Chess", "Monopoly", "Scrabble", "Risk", "Clue", "Uno", "Catan", "Twister", "Yahtzee", "Pictionary", "Boggle", "Jenga", "Dominoes", "Checkers", "Battleship", "Ticket to Ride", "Cranium", "Candy Land", "Operation", "Pandemic", "Guess Who", "Sorry!", "Connect Four", "Backgammon"] },
+    { category: "Planets", words: ["Mercury", "Venus", "Mars", "Neptune", "Earth", "Jupiter", "Saturn", "Uranus", "Pluto", "Ceres", "Eris", "Haumea", "Makemake", "Io", "Europa", "Titan", "Ganymede", "Callisto", "Phobos", "Deimos", "Triton", "Charon", "Enceladus", "Oberon"] },
+    { category: "Capital Cities", words: ["Paris", "Tokyo", "Ottawa", "Rome", "London", "Berlin", "Madrid", "Moscow", "Beijing", "Canberra", "Washington D.C.", "Brasilia", "Cairo", "Hanoi", "New Delhi", "Seoul", "Bangkok", "Jakarta", "Lisbon", "Athens", "Vienna", "Warsaw", "Stockholm", "Helsinki"] },
+    { category: "Programming Languages", words: ["Python", "Java", "Ruby", "Swift", "JavaScript", "C++", "C#", "PHP", "Go", "Kotlin", "Perl", "R", "Scala", "Haskell", "Objective-C", "Visual Basic", "Dart", "Groovy", "Elixir", "Lua", "TypeScript", "Matlab", "Rust", "F#"] },
+    { category: "Sea Creatures", words: ["Octopus", "Seahorse", "Jellyfish", "Lobster", "Shrimp", "Crab", "Whale", "Dolphin", "Clownfish", "Swordfish", "Starfish", "Sea Turtle", "Manatee", "Manta Ray", "Squid", "Seal", "Penguin", "Eel", "Narwhal", "Walrus", "Angelfish", "Barracuda", "Pufferfish", "Seadragon"] }
+        ];
+
+        const gridContainer = document.getElementById("grid-container");
+        const timerDisplay = document.getElementById("time");
+        const categoryDisplay = document.querySelector(".category-display");
+        const newGameButton = document.getElementById("new-game-button");
+        const gameEndMessage = document.getElementById("game-end-message");
+        let gameWords = [];
+        let selectedWords = [];
+        let correctCategoriesFound = 0;
+        let startTime;
+        let timerInterval;
+        let currentCategories = []; 
+
+        const startScreen = document.getElementById("start-screen");
+        const startButton = document.getElementById("start-button");
+        const gameContainer = document.querySelector(".game-container");
+
+        startButton.addEventListener("click", () => {
+            startScreen.style.display = "none";
+            gameContainer.style.display = "flex";
+            startGame();
+        });
+
+        newGameButton.addEventListener("click", () => {
+            startGame();
+        });
+
+        function startGame() {
+            gameEndMessage.style.display = "none";
+            correctCategoriesFound = 0;
+            selectedWords = [];
+            currentCategories = [];
+            categoryDisplay.textContent = ""; 
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "00:00";
+
+            let selectedCategories = [];
+            while (selectedCategories.length < 4) {
+                const randomIndex = Math.floor(Math.random() * wordBank.length);
+                if (!selectedCategories.includes(wordBank[randomIndex])) {
+                    selectedCategories.push(wordBank[randomIndex]);
+                }
+            }
+            currentCategories = selectedCategories.map(cat => cat.category);
+
+            gameWords = [];
+            selectedCategories.forEach(category => {
+                let wordsToUse;
+                if (category.words.length > 4) {
+                    wordsToUse = [...category.words]; 
+                    shuffleArray(wordsToUse); 
+                    wordsToUse = wordsToUse.slice(0, 4); 
+                } else {
+                    wordsToUse = category.words;
+                }
+                gameWords = gameWords.concat(wordsToUse);
+            });
+
+            shuffleArray(gameWords);
+
+            renderGrid(gameWords);
+
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function renderGrid(words) {
+            gridContainer.innerHTML = "";
+            words.forEach(word => {
+                const card = document.createElement("div");
+                card.classList.add("word-card");
+                card.textContent = word;
+                card.addEventListener("click", selectWord);
+                gridContainer.appendChild(card);
+            });
+        }
+
+        function selectWord(event) {
+            const wordCard = event.target;
+            const word = wordCard.textContent;
+
+            if (selectedWords.includes(word)) {
+                return; 
+            }
+
+            wordCard.classList.add("selected");
+            selectedWords.push(word);
+
+            if (selectedWords.length === 4) {
+                checkCategory();
+            }
+        }
+
+        function checkCategory() {
+            let category = null;
+            let foundWords = [];
+            wordBank.forEach(cat => {
+                const intersection = selectedWords.filter(word => cat.words.includes(word));
+                if (intersection.length === 4) {
+                    category = cat.category;
+                    foundWords = intersection;
+                }
+            });
+
+            if (category) {
+                correctCategoriesFound++;
+                categoryDisplay.textContent = `👍Correct! Category found: ${category}`;
+
+                const wordCards = document.querySelectorAll(".word-card");
+                wordCards.forEach(card => {
+                    if (selectedWords.includes(card.textContent)) {
+                        card.classList.add("correct"); 
+                        card.style.backgroundColor = "#a0a0a0"; 
+                    }
+                });
+                setTimeout(() => {
+                    const wordCards = document.querySelectorAll(".word-card");
+                    wordCards.forEach(card => {
+                        if (selectedWords.includes(card.textContent)) {
+                            card.remove(); 
+                        }
+                    });
+                    if (correctCategoriesFound === 4) {
+                        endGame();
+                    } else {
+                        selectedWords = []; 
+                    }
+                }, 500);
+            } else {
+                categoryDisplay.textContent = "😟Incorrect category. Try again.";
+                const wordCards = document.querySelectorAll(".word-card");
+                wordCards.forEach(card => {
+                    if (selectedWords.includes(card.textContent)) {
+                        card.classList.remove("selected");
+                    }
+                });
+                selectedWords = [];
+            }
+        }
+
+        function updateTimer() {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsedTime / 60);
+            const seconds = elapsedTime % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            gameEndMessage.style.display = "block";
+            
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsedTime / 60);
+            const seconds = elapsedTime % 60;
+            const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            const now = new Date();
+            const dateTimeStr = now.toLocaleString();
+            
+            const completionDetails = document.getElementById('completion-details');
+            completionDetails.innerHTML = `
+                Time taken: ${timeStr}<br>
+                Completed on: ${dateTimeStr}
+            `;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+</body>
+</html>
